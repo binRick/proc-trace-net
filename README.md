@@ -170,6 +170,45 @@ The `[extra]` field shows a reverse DNS hostname (with `-r`), a TCP state name (
 
 Linux tracks every TCP and UDP connection through the **conntrack** subsystem (`nf_conntrack`). Conntrack publishes real-time events over a netlink socket (`AF_NETLINK` / `NETLINK_NETFILTER`, multicast groups `NF_NETLINK_CONNTRACK_NEW` and `NF_NETLINK_CONNTRACK_DESTROY`). Any process holding `CAP_NET_ADMIN` can subscribe and receive a message for every new or closed connection, system-wide — the same mechanism `conntrack -E` and `iptables` itself use.
 
+```mermaid
+flowchart LR
+    subgraph K ["Linux Kernel"]
+        direction TB
+        CT["nf_conntrack"]
+    end
+    subgraph FS ["/proc filesystem"]
+        direction TB
+        TCP["/proc/net/tcp(6)\n/proc/net/udp(6)"]
+        FD["/proc/PID/fd/\nsocket:[inode]"]
+    end
+    P(["Any Process"]) -->|"connect() / accept()"| CT
+    CT -->|"CONNTRACK_NEW / DESTROY\nNETLINK_NETFILTER"| PTN["proc-trace-net"]
+    PTN -->|"src:port + dst:port\n→ inode"| TCP
+    TCP --> FD
+    FD -->|"PID + comm"| PTN
+    PTN --> OUT["Terminal / File"]
+```
+
+```mermaid
+sequenceDiagram
+    participant C as curl (PID 1234)
+    participant K as Linux Kernel
+    participant PTN as proc-trace-net
+    participant FS as /proc
+
+    C->>K: connect(93.184.216.34:443)
+    K-->>PTN: CONNTRACK_NEW<br/>10.0.2.15:54321 → 93.184.216.34:443 TCP
+    PTN->>FS: /proc/net/tcp — match :54321
+    FS-->>PTN: inode=98765
+    PTN->>FS: scan /proc/*/fd/ for socket:[98765]
+    FS-->>PTN: PID=1234, comm=curl
+    PTN->>PTN: store connDB[key] = {pid, comm, startAt}
+    Note over PTN: "1234 curl  TCP  10.0.2.15:54321 → 93.184.216.34:443"
+    K-->>PTN: CONNTRACK_DESTROY<br/>10.0.2.15:54321 → 93.184.216.34:443
+    PTN->>PTN: lookup connDB → elapsed=0.342s
+    Note over PTN: "1234 curl  TCP  10.0.2.15:54321 × 93.184.216.34:443  0.342s"
+```
+
 **On each NEW event:**
 
 1. Parse the `CTA_TUPLE_ORIG` nested netlink attributes to extract src/dst IP, port, and protocol
