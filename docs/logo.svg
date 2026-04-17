@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a2a1a"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+  </defs>
+
+  <!-- outer ring -->
+  <circle cx="100" cy="100" r="96" fill="url(#bg)" stroke="#22c55e" stroke-width="1.2" stroke-opacity="0.35"/>
+
+  <!-- glow layer -->
+  <circle cx="100" cy="100" r="80" fill="url(#glow)" filter="url(#blur)"/>
+
+  <!-- globe latitude lines -->
+  <ellipse cx="100" cy="100" rx="52" ry="52" fill="none" stroke="#166534" stroke-width="0.8" stroke-opacity="0.6"/>
+  <ellipse cx="100" cy="100" rx="52" ry="20" fill="none" stroke="#166534" stroke-width="0.8" stroke-opacity="0.6"/>
+  <ellipse cx="100" cy="100" rx="52" ry="38" fill="none" stroke="#166534" stroke-width="0.8" stroke-opacity="0.4"/>
+  <!-- globe longitude lines -->
+  <ellipse cx="100" cy="100" rx="22" ry="52" fill="none" stroke="#166534" stroke-width="0.8" stroke-opacity="0.6"/>
+  <line x1="100" y1="48" x2="100" y2="152" stroke="#166534" stroke-width="0.8" stroke-opacity="0.5"/>
+  <!-- equator -->
+  <line x1="48" y1="100" x2="152" y2="100" stroke="#166534" stroke-width="0.8" stroke-opacity="0.5"/>
+
+  <!-- connection lines (behind nodes) -->
+  <line x1="100" y1="100" x2="60"  y2="65"  stroke="#22c55e" stroke-width="1.5" stroke-opacity="0.7"/>
+  <line x1="100" y1="100" x2="148" y2="62"  stroke="#22c55e" stroke-width="1.5" stroke-opacity="0.7"/>
+  <line x1="100" y1="100" x2="152" y2="128" stroke="#22c55e" stroke-width="1.5" stroke-opacity="0.7"/>
+  <line x1="100" y1="100" x2="52"  y2="135" stroke="#22d3ee" stroke-width="1.5" stroke-opacity="0.7"/>
+  <line x1="100" y1="100" x2="100" y2="42"  stroke="#22c55e" stroke-width="1.2" stroke-opacity="0.5"/>
+
+  <!-- secondary links between outer nodes -->
+  <line x1="60"  y1="65"  x2="148" y2="62"  stroke="#16a34a" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+  <line x1="148" y1="62"  x2="152" y2="128" stroke="#16a34a" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+
+  <!-- center node glow -->
+  <circle cx="100" cy="100" r="12" fill="#22c55e" fill-opacity="0.15" filter="url(#blur)"/>
+  <!-- center node -->
+  <circle cx="100" cy="100" r="7"  fill="#22c55e"/>
+  <circle cx="100" cy="100" r="3.5" fill="#bbf7d0"/>
+
+  <!-- outer nodes -->
+  <circle cx="60"  cy="65"  r="5" fill="#4ade80"/>
+  <circle cx="60"  cy="65"  r="2" fill="#f0fdf4"/>
+  <circle cx="148" cy="62"  r="5" fill="#4ade80"/>
+  <circle cx="148" cy="62"  r="2" fill="#f0fdf4"/>
+  <circle cx="152" cy="128" r="5" fill="#4ade80"/>
+  <circle cx="152" cy="128" r="2" fill="#f0fdf4"/>
+  <circle cx="52"  cy="135" r="5" fill="#22d3ee"/>
+  <circle cx="52"  cy="135" r="2" fill="#e0f2fe"/>
+  <circle cx="100" cy="42"  r="4" fill="#4ade80"/>
+  <circle cx="100" cy="42"  r="1.8" fill="#f0fdf4"/>
+
+  <!-- animated pulse -->
+  <circle cx="100" cy="100" r="10" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-opacity="0.6">
+    <animate attributeName="r"       from="8"   to="28"  dur="2.4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" from="0.6" to="0"   dur="2.4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="100" cy="100" r="10" fill="none" stroke="#22c55e" stroke-width="1" stroke-opacity="0.3">
+    <animate attributeName="r"       from="8"   to="44"  dur="2.4s" begin="0.8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" from="0.4" to="0"   dur="2.4s" begin="0.8s" repeatCount="indefinite"/>
+  </circle>
+</svg>

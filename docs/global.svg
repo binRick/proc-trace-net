@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="340" viewBox="0 0 780 340">
+  <defs>
+    <linearGradient id="tbg2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    <style>
+      .cur2 { animation: blink2 1.1s step-end infinite; }
+      @keyframes blink2 { 0%,100% { opacity:1 } 50% { opacity:0 } }
+    </style>
+  </defs>
+
+  <!-- shadow -->
+  <rect x="4" y="6" width="772" height="330" rx="12" fill="rgba(0,0,0,0.45)"/>
+  <!-- window -->
+  <rect width="772" height="330" rx="12" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <!-- titlebar -->
+  <rect width="772" height="36" rx="12" fill="url(#tbg2)"/>
+  <rect y="24" width="772" height="12" fill="#161b22"/>
+  <line x1="0" y1="36" x2="772" y2="36" stroke="#21262d" stroke-width="1"/>
+  <!-- traffic lights -->
+  <circle cx="20" cy="18" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="18" r="6" fill="#febc2e"/>
+  <circle cx="60" cy="18" r="6" fill="#28c840"/>
+  <!-- title -->
+  <text x="386" y="23" text-anchor="middle" font-family="'SF Mono','Fira Code','Courier New',monospace" font-size="12" fill="#484f58">proc-trace-net — system-wide</text>
+
+  <!-- L1: prompt -->
+  <text xml:space="preserve" x="20" y="65" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#a78bfa">$</tspan><tspan fill="#fbbf24"> sudo </tspan><tspan fill="#4fc3f7">proc-trace-net</tspan><tspan fill="#e2e8f0"> -ctu</tspan>
+  </text>
+
+  <!-- L2: inbound SSH -->
+  <text xml:space="preserve" x="20" y="88" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#fbbf24"> 1234</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4fc3f7">sshd        </tspan><tspan fill="#f87171"> &lt;root&gt; </tspan><tspan fill="#6e7681"> TCP  </tspan><tspan fill="#4ade80">10.0.2.15:22            </tspan><tspan fill="#a78bfa"> ← </tspan><tspan fill="#fbbf24">203.0.113.7:41002</tspan>
+  </text>
+
+  <!-- L3: DNS UDP -->
+  <text xml:space="preserve" x="20" y="111" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#fbbf24"> 2341</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4fc3f7">systemd-r   </tspan><tspan fill="#f87171"> &lt;root&gt; </tspan><tspan fill="#6e7681"> UDP  </tspan><tspan fill="#4ade80">10.0.2.15:46012         </tspan><tspan fill="#22d3ee"> → </tspan><tspan fill="#fbbf24">8.8.8.8:53</tspan>
+  </text>
+
+  <!-- L4: curl outbound HTTPS -->
+  <text xml:space="preserve" x="20" y="134" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#fbbf24"> 3892</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4fc3f7">curl        </tspan><tspan fill="#4ade80"> &lt;rick&gt; </tspan><tspan fill="#6e7681"> TCP  </tspan><tspan fill="#4ade80">10.0.2.15:54321         </tspan><tspan fill="#22d3ee"> → </tspan><tspan fill="#fbbf24">93.184.216.34:443</tspan>
+  </text>
+
+  <!-- L5: dockerd pull -->
+  <text xml:space="preserve" x="20" y="157" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#fbbf24"> 4401</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4fc3f7">dockerd     </tspan><tspan fill="#f87171"> &lt;root&gt; </tspan><tspan fill="#6e7681"> TCP  </tspan><tspan fill="#4ade80">10.0.2.15:55001         </tspan><tspan fill="#22d3ee"> → </tspan><tspan fill="#fbbf24">52.1.0.1:443</tspan>
+  </text>
+
+  <!-- L6: inbound nginx -->
+  <text xml:space="preserve" x="20" y="180" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#fbbf24"> 5112</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4fc3f7">nginx       </tspan><tspan fill="#fbbf24"> &lt;www-d&gt;</tspan><tspan fill="#6e7681"> TCP  </tspan><tspan fill="#4ade80">10.0.2.15:80            </tspan><tspan fill="#a78bfa"> ← </tspan><tspan fill="#fbbf24">185.42.0.9:39211</tspan>
+  </text>
+
+  <!-- L7: curl CLOSE with timing -->
+  <text xml:space="preserve" x="20" y="203" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#fbbf24"> 3892</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4fc3f7">curl        </tspan><tspan fill="#4ade80"> &lt;rick&gt; </tspan><tspan fill="#6e7681"> TCP  </tspan><tspan fill="#4ade80">10.0.2.15:54321         </tspan><tspan fill="#f87171"> × </tspan><tspan fill="#fbbf24">93.184.216.34:443      </tspan><tspan fill="#22d3ee"> 0.342s</tspan>
+  </text>
+
+  <!-- L8: git TCP state update -->
+  <text xml:space="preserve" x="20" y="226" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#fbbf24"> 6790</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4fc3f7">git         </tspan><tspan fill="#4ade80"> &lt;rick&gt; </tspan><tspan fill="#6e7681"> TCP  </tspan><tspan fill="#4ade80">10.0.2.15:56211         </tspan><tspan fill="#c084fc"> ⇒ </tspan><tspan fill="#fbbf24">140.82.121.3:22        </tspan><tspan fill="#c084fc"> ESTABLISHED</tspan>
+  </text>
+
+  <!-- L9: next prompt + blinking cursor -->
+  <text xml:space="preserve" x="20" y="275" font-family="'Courier New',Consolas,'Lucida Console',monospace" font-size="13">
+    <tspan fill="#a78bfa">$</tspan><tspan fill="#22d3ee" class="cur2"> █</tspan>
+  </text>
+</svg>
