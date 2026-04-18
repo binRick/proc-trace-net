@@ -3,7 +3,7 @@
 // Requires CONFIG_NF_CONNTRACK=y (nf_conntrack module, standard on any Linux running Docker)
 // Requires root or CAP_NET_ADMIN
 //
-// Usage: proc-trace-net [-crtUuQo46] [-o FILE] [-p PID[,PID,...] | CMD...]
+// Usage: proc-trace-net [-crtUuQo46O] [-o FILE] [-p PID[,PID,...] | CMD...]
 package main
 
 import (
@@ -195,13 +195,14 @@ var version = "dev"
 
 var (
 	watchPIDs   []int32
-	showClose   bool // -t: show DESTROY events with elapsed time
-	showUpdate  bool // -U: show TCP state update events
-	showUser    bool // -u: print owning user
-	showReverse bool // -r: reverse DNS for remote IPs
-	ipv4Only    bool // -4
-	ipv6Only    bool // -6
-	showErrors  = true
+	showClose    bool // -t: show DESTROY events with elapsed time
+	showUpdate   bool // -U: show TCP state update events
+	showUser     bool // -u: print owning user
+	showReverse  bool // -r: reverse DNS for remote IPs
+	ipv4Only     bool // -4
+	ipv6Only     bool // -6
+	outboundOnly bool // -O: outbound connections only
+	showErrors   = true
 	colorMode   bool
 	colorForce  bool
 	out         io.Writer = os.Stdout
@@ -253,6 +254,8 @@ func main() {
 				ipv4Only = true
 			case '6':
 				ipv6Only = true
+			case 'O':
+				outboundOnly = true
 			case 'Q':
 				showErrors = false
 			case 'p':
@@ -419,6 +422,9 @@ func handleNew(key string, orig *connTuple, payload []byte) {
 	if len(watchPIDs) > 0 && !isWatched(pid) {
 		return
 	}
+	if outboundOnly && dir != dirOutbound {
+		return
+	}
 
 	var tcpState uint8
 	if orig.Proto == 6 {
@@ -455,6 +461,9 @@ func handleUpdate(key string, orig *connTuple, payload []byte) {
 	}
 
 	if len(watchPIDs) > 0 && !isWatched(pid) {
+		return
+	}
+	if outboundOnly && dir != dirOutbound {
 		return
 	}
 
@@ -969,6 +978,7 @@ func usage() {
 	fmt.Fprintf(e, "    🔍  %s-r%s          reverse DNS lookup for remote IPs %s(async, cached)%s\n", yellow, reset, dim, reset)
 	fmt.Fprintf(e, "    4️⃣   %s-4%s          IPv4 connections only\n", yellow, reset)
 	fmt.Fprintf(e, "    6️⃣   %s-6%s          IPv6 connections only\n", yellow, reset)
+	fmt.Fprintf(e, "    📤  %s-O%s          outbound connections only %s(hide inbound/unknown)%s\n", yellow, reset, dim, reset)
 	fmt.Fprintf(e, "    🔇  %s-Q%s          suppress error messages\n", yellow, reset)
 	fmt.Fprintf(e, "    📝  %s-o%s %sFILE%s      write output to FILE instead of stdout\n", yellow, reset, cyan, reset)
 	fmt.Fprintf(e, "    🎯  %s-p%s %sPID%s       trace PIDs and their descendants %s(comma-separate for multiple)%s\n", yellow, reset, cyan, reset, dim, reset)
