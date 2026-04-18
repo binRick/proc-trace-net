@@ -422,7 +422,7 @@ func handleNew(key string, orig *connTuple, payload []byte) {
 	if len(watchPIDs) > 0 && !isWatched(pid) {
 		return
 	}
-	if outboundOnly && dir != dirOutbound {
+	if outboundOnly && dir == dirInbound {
 		return
 	}
 
@@ -463,7 +463,7 @@ func handleUpdate(key string, orig *connTuple, payload []byte) {
 	if len(watchPIDs) > 0 && !isWatched(pid) {
 		return
 	}
-	if outboundOnly && dir != dirOutbound {
+	if outboundOnly && dir == dirInbound {
 		return
 	}
 
