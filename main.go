@@ -155,6 +155,50 @@ var (
 	connDB = make(map[string]*connEntry)
 )
 
+// ─── Local IP cache (for direction fallback when socket is in container netns) ─
+
+var (
+	localIPsMu   sync.Once
+	localIPsSet  = make(map[string]bool)
+)
+
+func initLocalIPs() {
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		return
+	}
+	for _, iface := range ifaces {
+		addrs, err := iface.Addrs()
+		if err != nil {
+			continue
+		}
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+			if ip != nil {
+				if v4 := ip.To4(); v4 != nil {
+					localIPsSet[v4.String()] = true
+				} else {
+					localIPsSet[ip.String()] = true
+				}
+			}
+		}
+	}
+}
+
+func isLocalIP(ip net.IP) bool {
+	localIPsMu.Do(initLocalIPs)
+	if v4 := ip.To4(); v4 != nil {
+		return localIPsSet[v4.String()]
+	}
+	return localIPsSet[ip.String()]
+}
+
 // ─── Async reverse DNS cache ─────────────────────────────────────────────────
 
 var (
@@ -679,7 +723,14 @@ func parseTCPState(payload []byte) uint8 {
 func findPIDAndDir(orig *connTuple) (int32, string, direction) {
 	inode, dir := findInodeWithDir(orig)
 	if inode == 0 {
-		return 0, "", dirUnknown
+		// Socket not in host netns (e.g. Docker container). Fall back to
+		// IP-based heuristic: if DstIP is local the connection is inbound.
+		if isLocalIP(orig.DstIP) {
+			dir = dirInbound
+		} else if isLocalIP(orig.SrcIP) {
+			dir = dirOutbound
+		}
+		return 0, "", dir
 	}
 	pid, comm := inodeToPID(inode)
 	return pid, comm, dir
